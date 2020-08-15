@@ -60,15 +60,19 @@
     var Text = document.getElementById("Text")
     var Send = document.getElementById("Send")
     Send.addEventListener("click", function () {
-        var data = JSON.stringify({
-            username: Name.value,
-            content: Text.value,
-        })
-        var request = new XMLHttpRequest();
-        request.open('POST', 'api.php', true);
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-        request.send(data);
-        
-        Text.value = ""
+        var name = Name.value.trim()
+        var c = Text.value.trim()
+        if (name.length > 0 && c.length > 0) {
+            var data = JSON.stringify({
+                username: name,
+                content: c,
+            })
+            var request = new XMLHttpRequest();
+            request.open('POST', 'api.php', true);
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            request.send(data);
+
+            Text.value = ""
+        }
     })
 })()
