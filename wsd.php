@@ -9,7 +9,6 @@ $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $id = 0;
 
-# Count from 1 to 10 with a sleep
 while (1) {
 
     $s = $db->prepare("SELECT * from chat where id>? order by id desc limit 10");

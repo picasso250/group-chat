@@ -2,7 +2,30 @@
     // 配置
     var host = "ws://localhost:8080/";
 
+    var secretKey = 'secret key 123'
+
+    // Encrypt
+    var ciphertext = CryptoJS.AES.encrypt('my message', secretKey).toString();
+    console.log(ciphertext)
+
+    // Decrypt
+    var bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+    var originalText = bytes.toString(CryptoJS.enc.Utf8);
+
+    console.log(originalText); // 'my message'
+
     // 一些helper
+
+    // Encrypt
+    function encrypt(msg) {
+        return CryptoJS.AES.encrypt(msg, secretKey).toString();
+
+    }
+    function decrypt(ciphertext) {
+        var bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+        return bytes.toString(CryptoJS.enc.Utf8);
+    }
+
     var c = function (tag, content, attrs) {
         var e = document.createElement(tag);
         if (typeof content === "string") {
@@ -39,9 +62,9 @@
             for (var i = r.length - 1; i >= 0; i--) {
                 var m = r[i]
                 C.appendChild(c("div", [
-                    c("div", m.username, { "class": "username" }),
-                    c("div", m.content, { "class": "content" }),
-                    c("div", m.created, { "class": "created" })
+                    c("div", decrypt(m.username), { "class": "username" }),
+                    c("div", decrypt(m.content), { "class": "content" }),
+                    c("div", decrypt(m.created), { "class": "created" })
                 ], { "class": "chat-item" }))
                 // C.innerHTML += "" + m.username + ":" + m.content + "." + m.created + "<br>"
             }
@@ -64,8 +87,8 @@
         var c = Text.value.trim()
         if (name.length > 0 && c.length > 0) {
             var data = JSON.stringify({
-                username: name,
-                content: c,
+                username: encrypt(name),
+                content: encrypt(c),
             })
             var request = new XMLHttpRequest();
             request.open('POST', 'api.php', true);
