@@ -1,18 +1,14 @@
 (function () {
     // 配置
-    var host = "ws://localhost:8080/";
+    // var host = "ws://localhost:8080/";
+    // var host = "ws://ngrok2.xiaomiqiu.cn:8080/";
+    var wsloc = "ws://ngrok2.xiaomiqiu.cn:8081/";
+    var apiloc = "api.php";
 
     var secretKey = 'secret key 123'
-
-    // Encrypt
-    var ciphertext = CryptoJS.AES.encrypt('my message', secretKey).toString();
-    console.log(ciphertext)
-
-    // Decrypt
-    var bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
-    var originalText = bytes.toString(CryptoJS.enc.Utf8);
-
-    console.log(originalText); // 'my message'
+    if (localStorage && localStorage.getItem('sk')) {
+        secretKey = localStorage.getItem('sk')
+    }
 
     // 一些helper
 
@@ -22,11 +18,16 @@
 
     }
     function decrypt(ciphertext) {
-        var bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
-        return bytes.toString(CryptoJS.enc.Utf8);
+        try {
+            var bytes = CryptoJS.AES.decrypt(ciphertext, secretKey);
+            return bytes.toString(CryptoJS.enc.Utf8);
+        } catch (e) {
+            console.log(e)
+        }
+        return ""
     }
 
-    var c = function (tag, content, attrs) {
+    function c(tag, content, attrs) {
         var e = document.createElement(tag);
         if (typeof content === "string") {
             e.innerText = content;
@@ -42,12 +43,27 @@
         }
         return e;
     }
+    function g(id) {
+        return document.getElementById(id);
+    }
+
+    // 逻辑
+    var SetSecretButton = g("SetSecretButton")
+    var SecretInput = g("SecretInput")
+    SetSecretButton.addEventListener("click", function (evt) {
+        evt.preventDefault();
+        secretKey = SecretInput.value
+        if (localStorage) {
+            localStorage.setItem("sk", secretKey)
+            alert("密钥设置成功")
+        }
+    })
 
     if ("WebSocket" in window) {
         // alert("您的浏览器支持 WebSocket!");
 
         // 打开一个 web socket
-        var ws = new WebSocket(host);
+        var ws = new WebSocket(wsloc);
 
         ws.onopen = function () {
             // Web Socket 已连接上，使用 send() 方法发送数据
@@ -56,7 +72,7 @@
 
         ws.onmessage = function (evt) {
             var received_msg = evt.data;
-            console.log(received_msg)
+            // console.log(received_msg)
             var r = JSON.parse(received_msg)
             console.log(r)
             for (var i = r.length - 1; i >= 0; i--) {
@@ -91,7 +107,7 @@
                 content: encrypt(c),
             })
             var request = new XMLHttpRequest();
-            request.open('POST', 'api.php', true);
+            request.open('POST', apiloc, true);
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
             request.send(data);
 

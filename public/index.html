@@ -7,8 +7,12 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="SetSecretBox">
+    <input type="text" name="sk" id="SecretInput">
+    <input type="button" value="设置新密钥" id="SetSecretButton">
+  </div>
   <div id="C"></div>
-  <div><input id="Name"></div>
+  <div><input id="Name" placeholder="你的名字。"></div>
   <textarea id="Text"></textarea>
   <button id="Send">发送</button>
   <script type="text/javascript" src="bower_components/crypto-js/crypto-js.js"></script>
