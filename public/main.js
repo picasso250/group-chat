@@ -48,6 +48,7 @@
     }
 
     // 逻辑
+    var needToScrollEnd = false;
     var SetSecretButton = g("SetSecretButton")
     var SecretInput = g("SecretInput")
     SetSecretButton.addEventListener("click", function (evt) {
@@ -88,7 +89,12 @@
                     ], { "class": "chat-item" }))
                 }
             }
+            if (needToScrollEnd) {
+                window.scrollTo(100, document.body.clientHeight)
+                needToScrollEnd = false;
+            }
         };
+        // console.log(document.body.clientHeight)
 
         ws.onclose = function () {
             // 关闭 websocket
@@ -116,6 +122,10 @@
             request.send(data);
 
             Text.value = ""
+
+            setTimeout(function () {
+                needToScrollEnd = true;
+            }, 200)
         }
     }
     Send.addEventListener("click", SendIt)

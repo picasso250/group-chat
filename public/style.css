@@ -1,11 +1,17 @@
 .created {
     font-size: small;
-    color:grey;
+    color: grey;
 }
-.username{
-    color:#246798;
+
+.username {
+    color: #246798;
     font-size: small;
 }
-.chat-item{
-    margin:0.5em 0;
+
+.chat-item {
+    margin: 0.5em 0;
+}
+
+#Text {
+    width: 20em;
 }
