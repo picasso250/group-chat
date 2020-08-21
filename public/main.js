@@ -53,9 +53,11 @@
     SetSecretButton.addEventListener("click", function (evt) {
         evt.preventDefault();
         secretKey = SecretInput.value
-        if (localStorage) {
+        if (secretKey && localStorage) {
             localStorage.setItem("sk", secretKey)
+            SecretInput.value = ""
             alert("密钥设置成功")
+            location.reload()
         }
     })
 
@@ -77,12 +79,14 @@
             console.log(r)
             for (var i = r.length - 1; i >= 0; i--) {
                 var m = r[i]
-                C.appendChild(c("div", [
-                    c("div", decrypt(m.username), { "class": "username" }),
-                    c("div", decrypt(m.content), { "class": "content" }),
-                    c("div", decrypt(m.created), { "class": "created" })
-                ], { "class": "chat-item" }))
-                // C.innerHTML += "" + m.username + ":" + m.content + "." + m.created + "<br>"
+                var u = decrypt(m.username);
+                if (u.length > 0) {
+                    C.appendChild(c("div", [
+                        c("div", u, { "class": "username" }),
+                        c("div", decrypt(m.content), { "class": "content" }),
+                        c("div", (m.created), { "class": "created" })
+                    ], { "class": "chat-item" }))
+                }
             }
         };
 
@@ -98,7 +102,7 @@
     var Name = document.getElementById("Name")
     var Text = document.getElementById("Text")
     var Send = document.getElementById("Send")
-    Send.addEventListener("click", function () {
+    function SendIt() {
         var name = Name.value.trim()
         var c = Text.value.trim()
         if (name.length > 0 && c.length > 0) {
@@ -113,5 +117,11 @@
 
             Text.value = ""
         }
-    })
+    }
+    Send.addEventListener("click", SendIt)
+    Text.addEventListener("keydown", function (event) {
+        if (event.ctrlKey && event.keyCode == 13) {
+            SendIt();
+        }
+    });
 })()
