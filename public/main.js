@@ -123,9 +123,9 @@
 
             Text.value = ""
 
-            setTimeout(function () {
+            // setTimeout(function () {
                 needToScrollEnd = true;
-            }, 200)
+            // }, 200)
         }
     }
     Send.addEventListener("click", SendIt)
