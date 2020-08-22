@@ -2,7 +2,7 @@
     // 配置
     // var host = "ws://localhost:8080/";
     // var host = "ws://ngrok2.xiaomiqiu.cn:8080/";
-    var wsloc = "ws://ngrok2.xiaomiqiu.cn:8081/";
+    var wsloc = "ws://ngrok2.xiaomiqiu.cn:8002/";
     var apiloc = "api.php";
 
     var secretKey = 'secret key 123'
