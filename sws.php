@@ -12,7 +12,7 @@ $table = new Swoole\Table(8192);
 $table->column('id', Swoole\Table::TYPE_INT, 4);
 $table->create();
 
-$server = new Swoole\Websocket\Server("127.0.0.1", 9502);
+$server = new Swoole\Websocket\Server("127.0.0.1", 8003);
 $server->table = $table;
 
 $server->on('open', function ($server, $req)  {
