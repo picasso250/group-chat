@@ -1,11 +1,11 @@
 (function () {
     // 配置
-    // var host = "ws://localhost:8080/";
+    var wsloc = "ws://localhost:9502/";
     // var host = "ws://ngrok2.xiaomiqiu.cn:8080/";
-    var wsloc = "ws://ngrok2.xiaomiqiu.cn:8002/";
+    // var wsloc = "ws://ngrok2.xiaomiqiu.cn:8002/";
     var apiloc = "api.php";
 
-    var secretKey = 'secret key 123'
+    var secretKey = 'test'
     if (localStorage && localStorage.getItem('sk')) {
         secretKey = localStorage.getItem('sk')
     }
@@ -62,11 +62,12 @@
         }
     })
 
+    var ws;
     if ("WebSocket" in window) {
         // alert("您的浏览器支持 WebSocket!");
 
         // 打开一个 web socket
-        var ws = new WebSocket(wsloc);
+        ws = new WebSocket(wsloc);
 
         ws.onopen = function () {
             // Web Socket 已连接上，使用 send() 方法发送数据
@@ -116,15 +117,18 @@
                 username: encrypt(name),
                 content: encrypt(c),
             })
-            var request = new XMLHttpRequest();
-            request.open('POST', apiloc, true);
-            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-            request.send(data);
+            if (ws) {
+                ws.send(data)
+            }
+            // var request = new XMLHttpRequest();
+            // request.open('POST', apiloc, true);
+            // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            // request.send(data);
 
             Text.value = ""
 
             // setTimeout(function () {
-                needToScrollEnd = true;
+            needToScrollEnd = true;
             // }, 200)
         }
     }
