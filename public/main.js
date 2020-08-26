@@ -68,6 +68,12 @@
         // 打开一个 web socket
         ws = new WebSocket(wsloc);
 
+        console.log(ws,ws.readyState);
+
+        ws.onerror = function(){
+            g('msg').innerText="暂时连接不上服务器，请速去联系此间主人"
+        }
+
         ws.onopen = function () {
             // Web Socket 已连接上，使用 send() 方法发送数据
             ws.send("init");
