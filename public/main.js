@@ -68,8 +68,6 @@
         // 打开一个 web socket
         ws = new WebSocket(wsloc);
 
-        console.log(ws,ws.readyState);
-
         ws.onerror = function(){
             g('msg').innerText="暂时连接不上服务器，请速去联系此间主人"
         }
