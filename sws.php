@@ -1,6 +1,6 @@
 <?php
 
-use Swoole\Coroutine;
+define('PORT',8003);
 
 $config = parse_ini_file(".env.ini");
 
@@ -12,18 +12,18 @@ $table = new Swoole\Table(8192);
 $table->column('id', Swoole\Table::TYPE_INT, 4);
 $table->create();
 
-$server = new Swoole\Websocket\Server("127.0.0.1", 8003);
+echo "on port ",PORT,"\n";
+$server = new Swoole\Websocket\Server("127.0.0.1", PORT);
 $server->table = $table;
 
-$server->on('open', function ($server, $req)  {
-    $cid = posix_getpid();
-    echo "connection open: {$req->fd} $cid\n";
+$server->on('open', function ($server, $req) {
+    echo "connection open: {$req->fd}\n";
     // $fds[$req->fd] = 0;
     // print_r($fds);
     $server->table->set(strval($req->fd), ['id' => 0]);
 });
 
-$server->on('message', function ($server, $frame)  {
+$server->on('message', function ($server, $frame) {
     echo "received message: $frame->fd {$frame->data}\n";
     if ($frame->data === 'init') {
         $z = getById(0);
@@ -66,18 +66,28 @@ $server->on('close', function ($server, $fd) {
 
 $server->start();
 
+function prepare($sql)
+{
+    global $db;
+    try {
+        return $db->prepare($sql);
+    } catch (\Throwable $th) {
+        //throw $th;
+        print_r($th);
+    }
+}
 function getById($id)
 {
     global $db;
     $sql = "SELECT * from chat where id>? order by id desc limit 10";
-    $s = $db->prepare($sql);
+    $s = prepare($sql);
     $s->execute([$id]);
     return $s->fetchAll(PDO::FETCH_ASSOC);
 }
 function insertChat($j)
 {
     global $db;
-    $s = $db->prepare("INSERT into chat (username,content,created)
+    $s = prepare("INSERT into chat (username,content,created)
     values(:username, :content, now())");
     $s->execute($j);
 }

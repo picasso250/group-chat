@@ -1,9 +1,8 @@
 (function () {
     // 配置
-    // var wsloc = "ws://localhost:9502/";
+    // var wsloc = "ws://127.0.0.1:8002/";
     // var host = "ws://ngrok2.xiaomiqiu.cn:8080/";
-    var wsloc = "ws://ngrok2.xiaomiqiu.cn:8002/";
-    // var apiloc = "api.php";
+    var wsloc = "ws://xiaochi.ngrok2.xiaomiqiu.cn:8002/";
 
     var secretKey = 'test'
     if (localStorage && localStorage.getItem('sk')) {
