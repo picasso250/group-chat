@@ -1,18 +1,15 @@
 <?php
 
-define('PORT',8003);
+define('PORT', 8003);
 
 $config = parse_ini_file(".env.ini");
-
-$db = new PDO($config['db_dsn'], $config['db_user'], $config['db_pass']);
-$db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$db = getDB();
 
 $table = new Swoole\Table(8192);
 $table->column('id', Swoole\Table::TYPE_INT, 4);
 $table->create();
 
-echo "on port ",PORT,"\n";
+echo "on port ", PORT, "\n";
 $server = new Swoole\Websocket\Server("127.0.0.1", PORT);
 $server->table = $table;
 
@@ -24,21 +21,18 @@ $server->on('open', function ($server, $req) {
 });
 
 $server->on('message', function ($server, $frame) {
-    echo "received message: $frame->fd {$frame->data}\n";
+    echo date('c'), " received message: $frame->fd {$frame->data}\n";
     if ($frame->data === 'init') {
         $z = getById(0);
         if ($z) {
             $data = ['id' => intval($z[0]['id'])];
             $server->table->set(strval($frame->fd), $data);
-            // $fds[$frame->fd] = $z[0]['id'];
-            // echo json_encode($z) . "\n";
-            // echo "push ", $fd, "\n";
             $server->push($frame->fd, json_encode($z));
         }
     } else {
         $j = json_decode(trim($frame->data), true);
         if ($j) {
-            insertChat($j);
+            insertChat($j, $frame->fd);
         }
 
         // print_r($fds);
@@ -47,7 +41,6 @@ $server->on('message', function ($server, $frame) {
             $id = $data['id'];
             $z = getById($id);
             if ($z) {
-                // $fds[$fd] = $z[0]['id'];
                 $data = ['id' => $z[0]['id']];
                 $server->table->set($fd, $data);
                 // echo json_encode($z) . "\n";
@@ -66,6 +59,17 @@ $server->on('close', function ($server, $fd) {
 
 $server->start();
 
+// =================================================================
+function getDB()
+{
+    global $config;
+    $db = new PDO($config['db_dsn'], $config['db_user'], $config['db_pass'], array(
+        PDO::ATTR_PERSISTENT => true,
+    ));
+    $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    return $db;
+}
 function prepare($sql)
 {
     global $db;
@@ -74,7 +78,10 @@ function prepare($sql)
     } catch (\Throwable $th) {
         //throw $th;
         print_r($th);
+        echo "reconnecting...\n";
+        $GLOBALS['db'] = getDB();
     }
+    return $db->prepare($sql);
 }
 function getById($id)
 {
@@ -84,10 +91,11 @@ function getById($id)
     $s->execute([$id]);
     return $s->fetchAll(PDO::FETCH_ASSOC);
 }
-function insertChat($j)
+function insertChat($j, $uid)
 {
     global $db;
-    $s = prepare("INSERT into chat (username,content,created)
-    values(:username, :content, now())");
+    $j['uid'] = $uid;
+    $s = prepare("INSERT into chat (username,content,uid,created)
+    values(:username, :content, :uid, now())");
     $s->execute($j);
 }

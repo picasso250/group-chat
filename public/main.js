@@ -68,8 +68,8 @@
         // 打开一个 web socket
         ws = new WebSocket(wsloc);
 
-        ws.onerror = function(){
-            g('msg').innerText="暂时连接不上服务器，请速去联系此间主人"
+        ws.onerror = function () {
+            g('msg').innerText = "暂时连接不上服务器，请速去联系此间主人"
         }
 
         ws.onopen = function () {
@@ -85,6 +85,7 @@
             for (var i = r.length - 1; i >= 0; i--) {
                 var m = r[i]
                 var u = decrypt(m.username);
+                u += "(" + m.uid + ")";
                 if (u.length > 0) {
                     C.appendChild(c("div", [
                         c("div", u, { "class": "username" }),
@@ -123,10 +124,6 @@
             if (ws) {
                 ws.send(data)
             }
-            // var request = new XMLHttpRequest();
-            // request.open('POST', apiloc, true);
-            // request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-            // request.send(data);
 
             Text.value = ""
 
