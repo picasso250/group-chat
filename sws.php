@@ -3,7 +3,7 @@
 define('PORT', 8003);
 
 $config = parse_ini_file(".env.ini");
-$db = getDB();
+$db = null;
 
 $table = new Swoole\Table(8192);
 $table->column('id', Swoole\Table::TYPE_INT, 4);
@@ -52,7 +52,7 @@ $server->on('message', function ($server, $frame) {
 });
 
 $server->on('close', function ($server, $fd) {
-    echo "connection close: {$fd}\n";
+    echo date('c'), " connection close: {$fd}\n";
     // unset($fds[$fd]);
     $server->table->del(strval($fd));
 });
@@ -73,13 +73,16 @@ function getDB()
 function prepare($sql)
 {
     global $db;
+    if (!$db) {
+        $db = getDB();
+    }
     try {
         return $db->prepare($sql);
     } catch (\Throwable $th) {
         //throw $th;
         print_r($th);
         echo "reconnecting...\n";
-        $GLOBALS['db'] = getDB();
+        $GLOBALS['db'] = $db = getDB();
     }
     return $db->prepare($sql);
 }
