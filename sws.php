@@ -24,13 +24,12 @@ $server->on('open', function ($server, $req) {
 $server->on('message', function ($server, $frame) {
     echo date('c'), " received message: $frame->fd {$frame->data}\n";
     if ($frame->data === 'init') {
-            $data = ['id' =>0];
-            $server->table->set(strval($frame->fd), $data);
+        $data = ['id' => 0];
+        $server->table->set(strval($frame->fd), $data);
     } else {
         $j = json_decode(trim($frame->data), true);
-        var_dump($j);
-$j['uid']=$frame->fd;
-        
+        $j['uid'] = $frame->fd;
+
         // print_r($fds);
         // foreach ($fds as $fd => $id) {
         foreach ($server->table as $fd => $data) {
