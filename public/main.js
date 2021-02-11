@@ -1,8 +1,9 @@
 (function () {
     // 配置
-    // var wsloc = "ws://127.0.0.1:8002/";
+    // var wsloc = "ws://127.0.0.1:8003/";
+    var wsloc = "ws://106.54.229.185:8003/";
     // var host = "ws://ngrok2.xiaomiqiu.cn:8080/";
-    var wsloc = "ws://xiaochi.ngrok2.xiaomiqiu.cn:8002/";
+    // var wsloc = "ws://xiaochi.ngrok2.xiaomiqiu.cn:8002/";
 
     var secretKey = 'test'
     if (localStorage && localStorage.getItem('sk')) {

@@ -2,8 +2,8 @@
 
 define('PORT', 8003);
 
-$config = parse_ini_file(".env.ini");
-$db = null;
+// $config = parse_ini_file(".env.ini");
+// $db = null;
 
 // 保存用户看到的最晚消息的id
 $table = new Swoole\Table(8192);
