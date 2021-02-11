@@ -11,7 +11,7 @@ $table->column('id', Swoole\Table::TYPE_INT, 4);
 $table->create();
 
 echo "on port ", PORT, "\n";
-$server = new Swoole\Websocket\Server("127.0.0.1", PORT);
+$server = new Swoole\Websocket\Server("0.0.0.0", PORT);
 $server->table = $table;
 
 $server->on('open', function ($server, $req) {
